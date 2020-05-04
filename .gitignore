@@ -1,0 +1,11 @@
+Library/
+obj/
+Temp/
+CubicMansion_unity.userprefs
+*.apk
+*.rar
+*.zip
+.vs/
+.idea/
+*.sln
+*.csproj
