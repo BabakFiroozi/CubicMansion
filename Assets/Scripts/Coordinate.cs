@@ -35,16 +35,22 @@ namespace CubicMansion
         
         public void Change(Vector3 forward, Vector3 right, Vector3 up)
         {
+            var tr = PlayerCharacter.Instance.Movement.Tr;
+            
+            float diffAngle = Vector3.SignedAngle(tr.forward, ForwardVec, UpVec);
+            print("diff: " + diffAngle);
+            
             ForwardVec = forward;
             RightVec = right;
             UpVec = up;
-
-            var tr = PlayerCharacter.Instance.Movement.Tr;
+            
             // tr.forward = forward;
             // tr.right = right;
-            tr.up = up;
-            PlayerCharacter.Instance.Movement.SetTurnDirection(forward);
+            // tr.up = up;
 
+            Vector3 vec = Quaternion.AngleAxis(-diffAngle, UpVec) * forward;
+            PlayerCharacter.Instance.Movement.SetTurnDirection(vec);
+            
             Physics.gravity = -UpVec;
 
             print("Gravity Changed...");

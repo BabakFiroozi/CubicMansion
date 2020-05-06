@@ -77,9 +77,7 @@ namespace CubicMansion
             
             float mouseX = Input.GetAxis("Mouse X");
             
-            Vector3 upVec = Coordinate.Instance.UpVec;
-            
-            Quaternion quat = Quaternion.LookRotation(Movement.TurnDirection, upVec);
+            Quaternion quat = Quaternion.LookRotation(Movement.TurnDirection, Coordinate.Instance.UpVec);
             float angle = mouseX * Time.deltaTime * _horRotationSpeed;
             quat *= Quaternion.AngleAxis(angle, Vector3.up);
 
