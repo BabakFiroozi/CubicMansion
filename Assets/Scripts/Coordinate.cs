@@ -35,6 +35,8 @@ namespace CubicMansion
         
         public void Change(Vector3 forward, Vector3 right, Vector3 up)
         {
+            print("<color=yellow>Gravity Changed...</color>");
+
             var tr = PlayerCharacter.Instance.Movement.Tr;
             
             float diffAngle = Vector3.SignedAngle(tr.forward, ForwardVec, UpVec);
@@ -48,12 +50,15 @@ namespace CubicMansion
             // tr.right = right;
             // tr.up = up;
 
+            // Vector3 vec = Quaternion.AngleAxis(-diffAngle, UpVec) * forward;
+            // PlayerCharacter.Instance.Movement.SetTurnDirection(vec);
+
             Vector3 vec = Quaternion.AngleAxis(-diffAngle, UpVec) * forward;
+            PlayerCharacter.Instance.Movement.ChangeCoord(vec);
             PlayerCharacter.Instance.Movement.SetTurnDirection(vec);
+
             
             Physics.gravity = -UpVec;
-
-            print("Gravity Changed...");
         }
         
     }

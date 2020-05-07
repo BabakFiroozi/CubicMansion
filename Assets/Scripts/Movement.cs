@@ -67,6 +67,14 @@ namespace CubicMansion
 
         void FixedUpdate()
         {
+            if (_coordChanging)
+                GoCoord();
+            else
+                GoMove();
+        }
+
+        void GoMove()
+        {
             Vector3 forceDir = MoveDirection;
 
             Vector3 bodyVel = _rigidBody.velocity;
@@ -103,8 +111,35 @@ namespace CubicMansion
             }
 
             _rigidBody.angularVelocity = Vector3.zero;
-            _rigidBody.MoveRotation(Quaternion.LookRotation(TurnDirection, Coordinate.Instance.UpVec));
+            _coordFromRot  = Quaternion.LookRotation(TurnDirection, Coordinate.Instance.UpVec);
+            _rigidBody.MoveRotation(_coordFromRot);
         }
 
+
+        
+        bool _coordChanging;
+        Quaternion _coordFromRot;
+        Quaternion _toCoordRot;
+        float _degree;
+        
+        public void ChangeCoord(Vector3 vec)
+        {
+            _coordChanging = true;
+            _toCoordRot =  Quaternion.LookRotation(vec, Coordinate.Instance.UpVec);
+        }
+
+        void GoCoord()
+        {
+            float step = Time.fixedDeltaTime * 90;
+            _degree += step;
+                
+            var rot = Quaternion.RotateTowards(_coordFromRot, _toCoordRot, _degree);
+            _rigidBody.MoveRotation(rot);
+            if (_degree >= 90)
+            {
+                _degree = 0;
+                _coordChanging = false;
+            }
+        }
     }
 }
