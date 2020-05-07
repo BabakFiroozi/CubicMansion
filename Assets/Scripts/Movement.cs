@@ -15,6 +15,8 @@ namespace CubicMansion
         [SerializeField] float _walkSpeed;
         [SerializeField] float _runSpeed;
         [SerializeField] float _turnSpeed;
+        [SerializeField] float _coordRotSpeed = 90;
+
         
         Vector3 _turnPosition;
         
@@ -67,7 +69,7 @@ namespace CubicMansion
 
         void FixedUpdate()
         {
-            if (_coordChanging)
+            if (CoordChanging)
                 GoCoord();
             else
                 GoMove();
@@ -111,35 +113,40 @@ namespace CubicMansion
             }
 
             _rigidBody.angularVelocity = Vector3.zero;
-            _coordFromRot  = Quaternion.LookRotation(TurnDirection, Coordinate.Instance.UpVec);
-            _rigidBody.MoveRotation(_coordFromRot);
+            _fromCoordRot  = Quaternion.LookRotation(TurnDirection, Coordinate.Instance.UpVec);
+            _rigidBody.MoveRotation(_fromCoordRot);
         }
-
-
         
-        bool _coordChanging;
-        Quaternion _coordFromRot;
+
+
+        Quaternion _fromCoordRot;
         Quaternion _toCoordRot;
-        float _degree;
+        float _needCoordDegree;
+        float _coordDegree;
         
         public void ChangeCoord(Vector3 vec)
         {
-            _coordChanging = true;
+            CoordChanging = true;
             _toCoordRot =  Quaternion.LookRotation(vec, Coordinate.Instance.UpVec);
+            _needCoordDegree = Quaternion.Angle(_fromCoordRot, _toCoordRot);
+            
+            // print("_needCoordDegree: " + _needCoordDegree);
         }
 
         void GoCoord()
         {
-            float step = Time.fixedDeltaTime * 90;
-            _degree += step;
+            float step = Time.fixedDeltaTime * _coordRotSpeed;
+            _coordDegree += step;
                 
-            var rot = Quaternion.RotateTowards(_coordFromRot, _toCoordRot, _degree);
+            var rot = Quaternion.RotateTowards(_fromCoordRot, _toCoordRot, _coordDegree);
             _rigidBody.MoveRotation(rot);
-            if (_degree >= 90)
+            if (_coordDegree >= _needCoordDegree)
             {
-                _degree = 0;
-                _coordChanging = false;
+                _coordDegree = 0;
+                CoordChanging = false;
             }
         }
+
+        public bool CoordChanging { get; private set; }
     }
 }

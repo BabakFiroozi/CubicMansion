@@ -54,11 +54,14 @@ namespace CubicMansion
                 GetComponent<Unit>().Weapon.TryFire();
             }
 
-            GoMove();
-            GoRotate();
+            if (!Movement.CoordChanging)
+            {
+                GoSetMove();
+                GoRotate();
+            }
         }
 
-        void GoMove()
+        void GoSetMove()
         {
             if (Cursor.lockState != CursorLockMode.Locked)
                 return;
