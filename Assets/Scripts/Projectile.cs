@@ -18,7 +18,7 @@ namespace CubicMansion
         float _distance;
         Vector3 _initPos;
 
-        Unit _sourceUnit;
+        public Unit _sourceUnit { get; private set; }
 	
         RaycastHit[] _hitsArr = new RaycastHit[5];
 

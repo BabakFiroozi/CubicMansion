@@ -21,12 +21,13 @@ namespace CubicMansion
         Vector3 _turnPosition;
         
         bool _isTurning;
-
+        
         CapsuleCollider _capsuleCollider;
         
         bool _needToAddCoordChangingForce;
 
-        
+        readonly RaycastHit[] _checkOnGroundHitsArr = new RaycastHit[5];
+
         public Action<bool> LandedOnGroundEvent { get; set; }
 
         public Transform Tr { get; private set; }
@@ -36,6 +37,8 @@ namespace CubicMansion
         public Vector3 TurnDirection { get; private set; }
 
         public GameObject GameObj { get; private set; }
+        
+        public Unit Unit { get; private set; }
 
         public bool IsOnGround => OnGroundTime > 0;
         
@@ -68,12 +71,12 @@ namespace CubicMansion
             TurnDirection = forw;
 
             _capsuleCollider = GameObj.GetComponent<CapsuleCollider>();
+            Unit = GameObj.GetComponent<Unit>();
         }
 
         // Start is called before the first frame update
         void Start()
         {
-           
         }
 
         // Update is called once per frame
@@ -91,9 +94,6 @@ namespace CubicMansion
                 GoMove();
         }
 
-        RaycastHit[] _hitsArr = new RaycastHit[5];
-
-
         void CheckOnGround()
         {
             var ray = new Ray();
@@ -104,10 +104,10 @@ namespace CubicMansion
 
             float validHeight = _capsuleCollider.height / 2 + .01f;
 
-            RaycastHit hitResult = new RaycastHit();
+            var hitResult = new RaycastHit();
             
-            Physics.RaycastNonAlloc (ray, _hitsArr, checkDist);
-            foreach(var hit in _hitsArr)
+            Physics.RaycastNonAlloc (ray, _checkOnGroundHitsArr, checkDist);
+            foreach(var hit in _checkOnGroundHitsArr)
             {
                 if(hit.collider == null)
                     continue;
@@ -212,7 +212,7 @@ namespace CubicMansion
         float _needCoordDegree;
         float _coordDegree;
         
-        public void ChangeCoord(Vector3 vec)
+        public void ChangeCoord(Vector3 vec, float distance)
         {
             CoordChanging = true;
             _needToAddCoordChangingForce = true;

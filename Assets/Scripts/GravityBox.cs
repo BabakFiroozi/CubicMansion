@@ -20,8 +20,18 @@ namespace CubicMansion
         {
             print("OnDamage");
 
-            var tr = transform;
-            Coordinate.Instance.Change(_upVec);
+            var projectile  = prej.GetComponent<Projectile>();
+            
+            if(projectile == null)
+                return;
+
+            var unit = projectile._sourceUnit;
+            
+            if(unit != PlayerCharacter.Instance.Movement.Unit)
+                return;
+
+            float dist = (PlayerCharacter.Instance.Movement.Tr.position - pos).magnitude;
+            Coordinate.Instance.Change(_upVec, dist);
         }
     }
 }

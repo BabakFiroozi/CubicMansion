@@ -44,7 +44,7 @@ namespace CubicMansion
         public Vector3 DownVec => -UpVec;
 
         
-        public void Change(VecTypes vecType)
+        public void Change(VecTypes vecType, float distance)
         {
             print("<color=yellow>Gravity Changed...</color>");
 
@@ -79,7 +79,7 @@ namespace CubicMansion
             // PlayerCharacter.Instance.Movement.SetTurnDirection(vec);
 
             Vector3 vec = Quaternion.AngleAxis(diffAngle, UpVec) * ForwardVec;
-            PlayerCharacter.Instance.Movement.ChangeCoord(vec);
+            PlayerCharacter.Instance.Movement.ChangeCoord(vec, distance);
             PlayerCharacter.Instance.Movement.SetTurnDirection(vec);
 
             Physics.gravity = DownVec * _gravityAmount;
