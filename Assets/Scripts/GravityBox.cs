@@ -13,7 +13,7 @@ namespace CubicMansion
         void Start()
         {
             _damageable = gameObject.GetComponent<Organ>();
-            _damageable.OnDamage += OnDamage;
+            _damageable.OnDamageEvent += OnDamage;
         }
 
         void OnDamage(float dmg, Vector3 pos, GameObject prej)

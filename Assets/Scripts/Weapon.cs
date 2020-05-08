@@ -22,7 +22,7 @@ namespace CubicMansion
 
         public bool IsReady { get; private set; } = true;
         
-        public Action OnFire { get; private set; }
+        public Action OnFireEvent { get; private set; }
         
 
         void Start()
@@ -57,7 +57,7 @@ namespace CubicMansion
             var obj = Instantiate(_projectilePrefab, _fireTr.position, _fireTr.rotation);
             obj.GetComponent<Projectile>().SetSourceUnit(Owner);
             
-            OnFire?.Invoke();
+            OnFireEvent?.Invoke();
         }
     }
     

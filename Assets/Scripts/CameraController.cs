@@ -25,7 +25,7 @@ namespace CubicMansion
         
         void Update()
         {
-            if (Input.GetKeyDown(KeyCode.K))
+            if (Input.GetKeyDown(KeyCode.C))
             {
                 _follow = !_follow;
             }

@@ -41,13 +41,12 @@ namespace CubicMansion
 
         void Update()
         {
-            if (Input.GetKeyDown(KeyCode.L))
-            {
-                if (Cursor.lockState == CursorLockMode.Locked)
-                    Cursor.lockState = CursorLockMode.None;
-                else if (Cursor.lockState == CursorLockMode.None)
-                    Cursor.lockState = CursorLockMode.Locked;
-            }
+            if (Input.GetKeyDown(KeyCode.Escape))
+                Cursor.lockState = CursorLockMode.None;
+            if (Input.GetKeyDown(KeyCode.V))
+                Cursor.lockState = CursorLockMode.Locked;
+            if (Input.GetMouseButton(0) && Cursor.lockState == CursorLockMode.None)
+                return;
 
             if (Input.GetButtonDown("Fire1"))
             {

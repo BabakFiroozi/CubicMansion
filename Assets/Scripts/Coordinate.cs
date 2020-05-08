@@ -5,9 +5,10 @@ namespace CubicMansion
     
     public class Coordinate : MonoBehaviour
     {
-       
         public static Coordinate Instance { get; private set; }
-        
+
+        [SerializeField] float _gravityAmount = 9.8f;
+
         public VecTypes UpVecType { get; private set; }
         
         
@@ -36,7 +37,11 @@ namespace CubicMansion
 
         public Vector3 ForwardVec { get; private set; } 
         public Vector3 RightVec { get; private set; }
-        public Vector3 UpVec { get; private set; } 
+        public Vector3 UpVec { get; private set; }
+
+        public Vector3 BackVec => -ForwardVec;
+        public Vector3 LeftVec => -RightVec;
+        public Vector3 DownVec => -UpVec;
 
         
         public void Change(VecTypes vecType)
@@ -77,8 +82,7 @@ namespace CubicMansion
             PlayerCharacter.Instance.Movement.ChangeCoord(vec);
             PlayerCharacter.Instance.Movement.SetTurnDirection(vec);
 
-            
-            Physics.gravity = -UpVec;
+            Physics.gravity = DownVec * _gravityAmount;
         }
         
     }

@@ -12,7 +12,7 @@ namespace CubicMansion
         [SerializeField] float _maxDistance = 0;
         [SerializeField] int _bulletsCount = 0;
 
-        public Action<GameObject> OnHit { get; private set; }
+        public Action<GameObject> OnHitEvent { get; private set; }
 
         Transform _tr;
         float _distance;
@@ -20,7 +20,7 @@ namespace CubicMansion
 
         Unit _sourceUnit;
 	
-        RaycastHit[] hitsArr = new RaycastHit[5];
+        RaycastHit[] _hitsArr = new RaycastHit[5];
 
         void Awake()
         {
@@ -49,8 +49,8 @@ namespace CubicMansion
 
             _distance += dist;
 
-            Physics.RaycastNonAlloc (ray, hitsArr, dist);
-            foreach(var hit in hitsArr)
+            Physics.RaycastNonAlloc (ray, _hitsArr, dist);
+            foreach(var hit in _hitsArr)
             {
                 if(hit.collider == null)
                     continue;
@@ -85,7 +85,7 @@ namespace CubicMansion
 
         void Hit(GameObject hitObj)
         {
-            OnHit?.Invoke(hitObj);
+            OnHitEvent?.Invoke(hitObj);
 
             var organ = hitObj.GetComponent<Organ>();
             if (organ != null)

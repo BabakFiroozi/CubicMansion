@@ -16,20 +16,31 @@ namespace CubicMansion
         [SerializeField] float _runSpeed;
         [SerializeField] float _turnSpeed;
         [SerializeField] float _coordRotSpeed = 90;
-
+        [SerializeField] float _coordChangingForce = 10;
         
         Vector3 _turnPosition;
         
         bool _isTurning;
 
+        CapsuleCollider _capsuleCollider;
+        
+        bool _needToAddCoordChangingForce;
+
+        
+        public Action<bool> LandedOnGroundEvent { get; set; }
 
         public Transform Tr { get; private set; }
 
         public Vector3 MoveDirection { get; private set; }
 
         public Vector3 TurnDirection { get; private set; }
+
+        public GameObject GameObj { get; private set; }
+
+        public bool IsOnGround => OnGroundTime > 0;
         
-        
+        public float OnGroundTime { get; private set; }
+
 
         public void SetMoveDirection(Vector3 dir)
         {
@@ -49,11 +60,14 @@ namespace CubicMansion
 
         void Awake()
         {
+            GameObj = gameObject;
             Tr = transform;
             var pos = Tr.position;
             var forw = Tr.forward;
             _turnPosition = pos + forw;
             TurnDirection = forw;
+
+            _capsuleCollider = GameObj.GetComponent<CapsuleCollider>();
         }
 
         // Start is called before the first frame update
@@ -69,11 +83,86 @@ namespace CubicMansion
 
         void FixedUpdate()
         {
+            CheckOnGround();
+
             if (CoordChanging)
                 GoCoord();
             else
                 GoMove();
         }
+
+        RaycastHit[] _hitsArr = new RaycastHit[5];
+
+
+        void CheckOnGround()
+        {
+            var ray = new Ray();
+            ray.origin = Tr.position;
+            ray.direction = _rigidBody.rotation * Vector3.down;
+
+            const float checkDist = 1000;
+
+            float validHeight = _capsuleCollider.height / 2 + .01f;
+
+            RaycastHit hitResult = new RaycastHit();
+            
+            Physics.RaycastNonAlloc (ray, _hitsArr, checkDist);
+            foreach(var hit in _hitsArr)
+            {
+                if(hit.collider == null)
+                    continue;
+                if(hit.collider.gameObject == GameObj)
+                    continue;
+
+                hitResult = hit;
+                break;
+            }
+
+            bool isOnGround = hitResult.distance <= validHeight;
+
+            if (isOnGround)
+            {
+                if (OnGroundTime < 0)
+                {
+                    OnGroundTime = 0;
+                    _needToAddCoordChangingForce = false;
+                    LandedOnGround(true);
+                }
+                OnGroundTime += Time.fixedDeltaTime;
+            }
+            else
+            {
+                if (OnGroundTime > 0)
+                {
+                    LandedOnGround(false);
+                    OnGroundTime = 0;
+                }
+                OnGroundTime -= Time.fixedDeltaTime;
+            }
+
+            _rigidBody.angularDrag = 10;
+
+            if (isOnGround)
+            {
+                _rigidBody.drag = 10;
+            }
+            else
+            {
+                _rigidBody.drag = 0;
+                if(_needToAddCoordChangingForce)
+                    _rigidBody.AddForce(Coordinate.Instance.DownVec * _coordChangingForce);
+            }
+            
+            // print("drag: " + _rigidBody.drag);
+            print("_needToAddCoordChangingForce: " + _needToAddCoordChangingForce);
+        }
+
+
+        void LandedOnGround(bool land)
+        {
+            LandedOnGroundEvent?.Invoke(land);
+        }
+        
 
         void GoMove()
         {
@@ -116,7 +205,6 @@ namespace CubicMansion
             _fromCoordRot  = Quaternion.LookRotation(TurnDirection, Coordinate.Instance.UpVec);
             _rigidBody.MoveRotation(_fromCoordRot);
         }
-        
 
 
         Quaternion _fromCoordRot;
@@ -127,6 +215,7 @@ namespace CubicMansion
         public void ChangeCoord(Vector3 vec)
         {
             CoordChanging = true;
+            _needToAddCoordChangingForce = true;
             _toCoordRot =  Quaternion.LookRotation(vec, Coordinate.Instance.UpVec);
             _needCoordDegree = Quaternion.Angle(_fromCoordRot, _toCoordRot);
             
