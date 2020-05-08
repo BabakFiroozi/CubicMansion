@@ -30,7 +30,7 @@ namespace CubicMansion
 
         void Start()
         {
-            // _modelObj.SetActive(false);
+            _modelObj.SetActive(false);
             _gameObj = gameObject;
             _tr = transform;
             
