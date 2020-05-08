@@ -6,6 +6,8 @@ namespace CubicMansion
     [RequireComponent(typeof(Organ))]
     public class GravityBox : MonoBehaviour
     {
+        [SerializeField] VecTypes _upVec = VecTypes.UP;
+        
         Organ _damageable;
 
         void Start()
@@ -19,7 +21,7 @@ namespace CubicMansion
             print("OnDamage");
 
             var tr = transform;
-            Coordinate.Instance.Change(tr.forward, tr.right, tr.up);
+            Coordinate.Instance.Change(_upVec);
         }
     }
 }

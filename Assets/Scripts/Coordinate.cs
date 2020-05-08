@@ -2,9 +2,14 @@ using UnityEngine;
 
 namespace CubicMansion
 {
+    
     public class Coordinate : MonoBehaviour
     {
+       
         public static Coordinate Instance { get; private set; }
+        
+        public VecTypes UpVecType { get; private set; }
+        
         
         void Awake()
         {
@@ -25,6 +30,7 @@ namespace CubicMansion
             ForwardVec = Vector3.forward;
             RightVec = Vector3.right;
             UpVec = Vector3.up;
+            UpVecType = VecTypes.UP;
         }
 
 
@@ -33,18 +39,32 @@ namespace CubicMansion
         public Vector3 UpVec { get; private set; } 
 
         
-        public void Change(Vector3 forward, Vector3 right, Vector3 up)
+        public void Change(VecTypes vecType)
         {
             print("<color=yellow>Gravity Changed...</color>");
 
-            var tr = PlayerCharacter.Instance.Movement.Tr;
+            Vector3 forward = PlayerCharacter.Instance.Movement.TurnDirection;
+
+            Vector3 up = UpVec;
+            if(vecType == VecTypes.UP)
+                up = Vector3.up;
+            if(vecType == VecTypes.DOWN)
+                up = Vector3.down;
+            if(vecType == VecTypes.RIGHT)
+                up = Vector3.right;
+            if(vecType == VecTypes.LEFT)
+                up = Vector3.left;
+            if(vecType == VecTypes.FORWARD)
+                up = Vector3.forward;
+            if(vecType == VecTypes.BACK)
+                up = Vector3.back;
             
-            float diffAngle = Vector3.SignedAngle(tr.forward, ForwardVec, UpVec);
+            float diffAngle = -Vector3.SignedAngle(forward, -up, UpVec);
             print("diff: " + diffAngle);
-            
-            ForwardVec = forward;
-            RightVec = right;
+
+            ForwardVec = UpVec;
             UpVec = up;
+            RightVec = Vector3.Cross(ForwardVec, UpVec);
             
             // tr.forward = forward;
             // tr.right = right;
@@ -53,7 +73,7 @@ namespace CubicMansion
             // Vector3 vec = Quaternion.AngleAxis(-diffAngle, UpVec) * forward;
             // PlayerCharacter.Instance.Movement.SetTurnDirection(vec);
 
-            Vector3 vec = Quaternion.AngleAxis(-diffAngle, UpVec) * forward;
+            Vector3 vec = Quaternion.AngleAxis(diffAngle, UpVec) * ForwardVec;
             PlayerCharacter.Instance.Movement.ChangeCoord(vec);
             PlayerCharacter.Instance.Movement.SetTurnDirection(vec);
 
