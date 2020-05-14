@@ -50,25 +50,37 @@ namespace CubicMansion
 
             Vector3 forward = PlayerCharacter.Instance.Movement.TurnDirection;
 
-            Vector3 up = UpVec;
+            Vector3 newUp = UpVec;
             if(vecType == VecTypes.UP)
-                up = Vector3.up;
+                newUp = Vector3.up;
             if(vecType == VecTypes.DOWN)
-                up = Vector3.down;
+                newUp = Vector3.down;
             if(vecType == VecTypes.RIGHT)
-                up = Vector3.right;
+                newUp = Vector3.right;
             if(vecType == VecTypes.LEFT)
-                up = Vector3.left;
+                newUp = Vector3.left;
             if(vecType == VecTypes.FORWARD)
-                up = Vector3.forward;
+                newUp = Vector3.forward;
             if(vecType == VecTypes.BACK)
-                up = Vector3.back;
+                newUp = Vector3.back;
             
-            float diffAngle = -Vector3.SignedAngle(forward, -up, UpVec);
-            print("diff: " + diffAngle);
+            float diffAngle = -Vector3.SignedAngle(forward, -newUp, UpVec);
+            // print("diff: " + diffAngle);
 
-            ForwardVec = UpVec;
-            UpVec = up;
+            Opposite = Vector3.Angle(UpVec, newUp) > 170;
+            Distance = distance;
+            
+            if (Opposite)
+            {
+                ForwardVec = -forward;
+                diffAngle = 0;
+            }
+            else
+            {
+                ForwardVec = UpVec;
+            }
+            
+            UpVec = newUp;
             RightVec = Vector3.Cross(ForwardVec, UpVec);
             
             // tr.forward = forward;
@@ -79,11 +91,14 @@ namespace CubicMansion
             // PlayerCharacter.Instance.Movement.SetTurnDirection(vec);
 
             Vector3 vec = Quaternion.AngleAxis(diffAngle, UpVec) * ForwardVec;
-            PlayerCharacter.Instance.Movement.ChangeCoord(vec, distance);
+            PlayerCharacter.Instance.Movement.ChangeCoord(vec);
             PlayerCharacter.Instance.Movement.SetTurnDirection(vec);
 
             Physics.gravity = DownVec * _gravityAmount;
         }
+        
+        public bool Opposite { get; private set; }
+        public float Distance { get; private set; }
         
     }
 }

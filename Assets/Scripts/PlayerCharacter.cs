@@ -80,18 +80,24 @@ namespace CubicMansion
             float mouseX = Input.GetAxis("Mouse X");
             
             Quaternion quat = Quaternion.LookRotation(Movement.TurnDirection, Coordinate.Instance.UpVec);
-            float angle = mouseX * Time.deltaTime * _horRotationSpeed;
-            quat *= Quaternion.AngleAxis(angle, Vector3.up);
+            float horAngle = mouseX * Time.deltaTime * _horRotationSpeed;
+            quat *= Quaternion.AngleAxis(horAngle, Vector3.up);
 
             // float halfAng = angle * Mathf.Deg2Rad / 2;
             // float sin = Mathf.Sin(halfAng);
             // quat *= new Quaternion(sin * Vector3.up.x, sin * Vector3.up.y, sin * Vector3.up.z, Mathf.Cos(halfAng));
 
             Movement.SetTurnDirection(quat * Vector3.forward);
-            
+
+            float lastAngle = Vector3.SignedAngle(_eye.forward, _tr.forward, _tr.right);
             float mouseY = Input.GetAxis("Mouse Y");
-            angle = mouseY * Time.deltaTime * _verRotationSpeed;
-            _eye.Rotate(new Vector3(-angle, 0, 0), Space.Self);
+            float verAngle = mouseY * Time.deltaTime * _verRotationSpeed;
+            print("verAngle: " + lastAngle + verAngle);
+            const float angle_limit = 75;
+            if (lastAngle + verAngle <= angle_limit && lastAngle + verAngle >= -angle_limit)
+            {
+                _eye.Rotate(new Vector3(-verAngle, 0, 0), Space.Self);
+            }
         }
     }
 }

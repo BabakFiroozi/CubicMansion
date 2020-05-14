@@ -212,7 +212,7 @@ namespace CubicMansion
         float _needCoordDegree;
         float _coordDegree;
         
-        public void ChangeCoord(Vector3 vec, float distance)
+        public void ChangeCoord(Vector3 vec)
         {
             CoordChanging = true;
             _needToAddCoordChangingForce = true;
@@ -224,7 +224,8 @@ namespace CubicMansion
 
         void GoCoord()
         {
-            float step = Time.fixedDeltaTime * _coordRotSpeed;
+            float stepCoef = Coordinate.Instance.Opposite ? 2 : 1;
+            float step = Time.fixedDeltaTime * _coordRotSpeed * stepCoef;
             _coordDegree += step;
                 
             var rot = Quaternion.RotateTowards(_fromCoordRot, _toCoordRot, _coordDegree);
