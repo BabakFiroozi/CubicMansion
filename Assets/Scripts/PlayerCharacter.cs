@@ -30,7 +30,7 @@ namespace CubicMansion
 
         void Start()
         {
-            _modelObj.SetActive(false);
+            // _modelObj.SetActive(false);
             _gameObj = gameObject;
             _tr = transform;
             
@@ -52,6 +52,11 @@ namespace CubicMansion
             {
                 GetComponent<Unit>().Weapon.TryFire();
             }
+
+            Movement.MoveAsRun(Input.GetButton("Run"));
+            
+            if(Input.GetButtonDown("Jump"))
+                Movement.TryJump();
 
             if (!Movement.CoordChanging)
             {
@@ -92,7 +97,6 @@ namespace CubicMansion
             float lastAngle = Vector3.SignedAngle(_eye.forward, _tr.forward, _tr.right);
             float mouseY = Input.GetAxis("Mouse Y");
             float verAngle = mouseY * Time.deltaTime * _verRotationSpeed;
-            print("verAngle: " + lastAngle + verAngle);
             const float angle_limit = 75;
             if (lastAngle + verAngle <= angle_limit && lastAngle + verAngle >= -angle_limit)
             {

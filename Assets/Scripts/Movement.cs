@@ -15,6 +15,7 @@ namespace CubicMansion
         [SerializeField] float _walkSpeed;
         [SerializeField] float _runSpeed;
         [SerializeField] float _turnSpeed;
+        [SerializeField] float _jumpForce;
         [SerializeField] float _coordRotSpeed = 90;
         [SerializeField] float _coordChangingForce = 10;
         
@@ -25,10 +26,13 @@ namespace CubicMansion
         CapsuleCollider _capsuleCollider;
         
         bool _needToAddCoordChangingForce;
+        
+        bool _moveAsRun;
 
         readonly RaycastHit[] _checkOnGroundHitsArr = new RaycastHit[5];
 
         public Action<bool> LandedOnGroundEvent { get; set; }
+        public Action JumpEvent { get; set; }
 
         public Transform Tr { get; private set; }
 
@@ -154,7 +158,7 @@ namespace CubicMansion
             }
             
             // print("drag: " + _rigidBody.drag);
-            print("_needToAddCoordChangingForce: " + _needToAddCoordChangingForce);
+            // print("_needToAddCoordChangingForce: " + _needToAddCoordChangingForce);
         }
 
 
@@ -166,44 +170,73 @@ namespace CubicMansion
 
         void GoMove()
         {
-            Vector3 forceDir = MoveDirection;
-
-            Vector3 bodyVel = _rigidBody.velocity;
-
-            float moveForce = _walkForce;
-            float moveSpeed = _walkSpeed;
-
-            if (forceDir != Vector3.zero)
+            if (IsOnGround)
             {
-                if (bodyVel.magnitude < moveSpeed)
-                {
-                    Vector3 forceVec = moveForce * Time.fixedDeltaTime * forceDir;
-                    forceVec = Quaternion.LookRotation(TurnDirection, Coordinate.Instance.UpVec) * forceVec;
-                    _rigidBody.AddForce(forceVec, ForceMode.Impulse);
-                }
-            }
+                Vector3 forceDir = MoveDirection;
 
-            if (_isTurning)
-            {
-                Vector3 turnDir = (_turnPosition - Tr.position).normalized;
-                float diffAngle = Vector3.Angle(TurnDirection, turnDir);
-                float rotSpeed = _turnSpeed * Time.fixedDeltaTime;
+                float moveForce = _moveAsRun ? _runForce : _walkForce;
+                float moveSpeed = _moveAsRun ? _runSpeed : _walkSpeed;
 
-                if (diffAngle >= rotSpeed)
+                if (forceDir != Vector3.zero)
                 {
-                    float ang = Mathf.Deg2Rad * rotSpeed;
-                    TurnDirection = Vector3.RotateTowards(TurnDirection, turnDir, ang, 0);
+                    Vector3 bodyVel = _rigidBody.velocity;
+                    var coordUpType = Coordinate.Instance.UpVecType;
+                    if (coordUpType == VecTypes.UP || coordUpType == VecTypes.DOWN)
+                        bodyVel.y = 0;
+                    if (coordUpType == VecTypes.FORWARD || coordUpType == VecTypes.BACK)
+                        bodyVel.z = 0;
+                    if (coordUpType == VecTypes.RIGHT || coordUpType == VecTypes.LEFT)
+                        bodyVel.x = 0;
+
+                    if (bodyVel.magnitude < moveSpeed)
+                    {
+                        Vector3 forceVec = moveForce * Time.fixedDeltaTime * forceDir;
+                        forceVec = Quaternion.LookRotation(TurnDirection, Coordinate.Instance.UpVec) * forceVec;
+                        _rigidBody.AddForce(forceVec, ForceMode.Force);
+                    }
                 }
-                else
+
+                if (_isTurning)
                 {
-                    TurnDirection = turnDir;
-                    _isTurning = false;
+                    Vector3 turnDir = (_turnPosition - Tr.position).normalized;
+                    float diffAngle = Vector3.Angle(TurnDirection, turnDir);
+                    float rotSpeed = _turnSpeed * Time.fixedDeltaTime;
+
+                    if (diffAngle >= rotSpeed)
+                    {
+                        float ang = Mathf.Deg2Rad * rotSpeed;
+                        TurnDirection = Vector3.RotateTowards(TurnDirection, turnDir, ang, 0);
+                    }
+                    else
+                    {
+                        TurnDirection = turnDir;
+                        _isTurning = false;
+                    }
                 }
             }
 
             _rigidBody.angularVelocity = Vector3.zero;
             _fromCoordRot  = Quaternion.LookRotation(TurnDirection, Coordinate.Instance.UpVec);
             _rigidBody.MoveRotation(_fromCoordRot);
+        }
+
+        public void MoveAsRun(bool run)
+        {
+            _moveAsRun = run;
+        }
+
+        public void TryJump()
+        {
+            if (!IsOnGround)
+                return;
+            Jump();
+        }
+
+        void Jump()
+        {
+            float jumpForce = _jumpForce;
+            _rigidBody.AddForce(Coordinate.Instance.UpVec * jumpForce, ForceMode.Force);
+            JumpEvent?.Invoke();
         }
 
 

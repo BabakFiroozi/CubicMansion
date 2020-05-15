@@ -188,11 +188,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _rigidBody: {fileID: 5758250503157745937}
-  _walkForce: 100
-  _runForce: 200
+  _walkForce: 5000
+  _runForce: 8000
   _walkSpeed: 2
   _runSpeed: 4
   _turnSpeed: 360
+  _jumpForce: 280
   _coordRotSpeed: 90
   _coordChangingForce: 5
 --- !u!114 &2085766840294744219
@@ -208,8 +209,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _eye: {fileID: 795640234620271662}
-  _horRotationSpeed: 80
-  _verRotationSpeed: 90
+  _horRotationSpeed: 120
+  _verRotationSpeed: 120
   _modelObj: {fileID: 5758250501335594385}
 --- !u!1 &6088523240966853075
 GameObject:
@@ -266,7 +267,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8605127568362059331}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.254, y: -0.256, z: 0}
+  m_LocalPosition: {x: 0.188, y: -0.234, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 3625929670071201944}

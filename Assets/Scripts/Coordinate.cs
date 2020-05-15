@@ -44,25 +44,27 @@ namespace CubicMansion
         public Vector3 DownVec => -UpVec;
 
         
-        public void Change(VecTypes vecType, float distance)
+        public void Change(VecTypes newUpVecType, float distance)
         {
             print("<color=yellow>Gravity Changed...</color>");
 
             Vector3 forward = PlayerCharacter.Instance.Movement.TurnDirection;
 
             Vector3 newUp = UpVec;
-            if(vecType == VecTypes.UP)
+            if(newUpVecType == VecTypes.UP)
                 newUp = Vector3.up;
-            if(vecType == VecTypes.DOWN)
+            if(newUpVecType == VecTypes.DOWN)
                 newUp = Vector3.down;
-            if(vecType == VecTypes.RIGHT)
+            if(newUpVecType == VecTypes.RIGHT)
                 newUp = Vector3.right;
-            if(vecType == VecTypes.LEFT)
+            if(newUpVecType == VecTypes.LEFT)
                 newUp = Vector3.left;
-            if(vecType == VecTypes.FORWARD)
+            if(newUpVecType == VecTypes.FORWARD)
                 newUp = Vector3.forward;
-            if(vecType == VecTypes.BACK)
+            if(newUpVecType == VecTypes.BACK)
                 newUp = Vector3.back;
+
+            UpVecType = newUpVecType;
             
             float diffAngle = -Vector3.SignedAngle(forward, -newUp, UpVec);
             // print("diff: " + diffAngle);
