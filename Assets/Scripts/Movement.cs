@@ -19,7 +19,7 @@ namespace CubicMansion
         [SerializeField] float _coordRotSpeed = 90;
         [SerializeField] float _coordChangingForce = 10;
         
-        RaycastHit[] _checkOnGroundHitResultsArr = new RaycastHit[5];
+        readonly RaycastHit[] _checkOnGroundHitResultsArr = new RaycastHit[5];
 
         Vector3 _turnPosition;
         
