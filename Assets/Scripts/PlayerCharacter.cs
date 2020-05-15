@@ -12,6 +12,8 @@ namespace CubicMansion
         [SerializeField] float _horRotationSpeed = 60;
         [SerializeField] float _verRotationSpeed = 90;
         [SerializeField] GameObject _modelObj;
+
+        [SerializeField] GameObject _defaultWeaponPrefab;
         
         
         GameObject _gameObj;
@@ -37,6 +39,9 @@ namespace CubicMansion
             Movement = _gameObj.GetComponent<Movement>();
 
             Cursor.lockState = CursorLockMode.Locked;
+
+            var obj = Instantiate(_defaultWeaponPrefab);
+            Movement.Unit.AddWeapon(obj.GetComponent<Weapon>());
         }
 
         void Update()
@@ -50,7 +55,7 @@ namespace CubicMansion
 
             if (Input.GetButtonDown("Fire1"))
             {
-                GetComponent<Unit>().Weapon.TryFire();
+                GetComponent<Unit>().CurrentWeapon.TryFire();
             }
 
             Movement.MoveAsRun(Input.GetButton("Run"));

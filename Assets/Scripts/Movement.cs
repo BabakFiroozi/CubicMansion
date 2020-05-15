@@ -19,6 +19,8 @@ namespace CubicMansion
         [SerializeField] float _coordRotSpeed = 90;
         [SerializeField] float _coordChangingForce = 10;
         
+        RaycastHit[] _checkOnGroundHitResultsArr = new RaycastHit[5];
+
         Vector3 _turnPosition;
         
         bool _isTurning;
@@ -28,8 +30,6 @@ namespace CubicMansion
         bool _needToAddCoordChangingForce;
         
         bool _moveAsRun;
-
-        readonly RaycastHit[] _checkOnGroundHitsArr = new RaycastHit[5];
 
         public Action<bool> LandedOnGroundEvent { get; set; }
         public Action JumpEvent { get; set; }
@@ -104,14 +104,17 @@ namespace CubicMansion
             ray.origin = Tr.position;
             ray.direction = _rigidBody.rotation * Vector3.down;
 
-            const float checkDist = 1000;
+            const float checkDist = 100;
 
             float validHeight = _capsuleCollider.height / 2 + .01f;
 
             var hitResult = new RaycastHit();
-            
-            Physics.RaycastNonAlloc (ray, _checkOnGroundHitsArr, checkDist);
-            foreach(var hit in _checkOnGroundHitsArr)
+
+            for (int h = 0; h < _checkOnGroundHitResultsArr.Length; ++h)
+                _checkOnGroundHitResultsArr[h] = default;
+
+            Physics.RaycastNonAlloc (ray, _checkOnGroundHitResultsArr, checkDist);
+            foreach(var hit in _checkOnGroundHitResultsArr)
             {
                 if(hit.collider == null)
                     continue;
@@ -122,7 +125,7 @@ namespace CubicMansion
                 break;
             }
 
-            bool isOnGround = hitResult.distance <= validHeight;
+            bool isOnGround = hitResult.distance > 0 && hitResult.distance <= validHeight;
 
             if (isOnGround)
             {
