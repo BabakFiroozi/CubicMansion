@@ -88,7 +88,12 @@ namespace CubicMansion
             
             print("<color=yellow>Gravity Changed...</color>");
 
-            UpVecType = CalcVecType(up);
+            VecTypes vecType = CalcVecType(up);
+
+            if(vecType == UpVecType)
+                return;
+            
+            UpVecType = vecType;
 
             Vector3 newUp = CalcVector(UpVecType);
 
