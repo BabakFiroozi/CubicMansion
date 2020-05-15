@@ -15,9 +15,12 @@ namespace CubicMansion
         
         public Unit Owner { get; private set; }
 
+        public Action EquippedEvent { get; set; }
+
         public void SetOwner(Unit unit)
         {
             Owner = unit;
+            EquippedEvent?.Invoke();
         }
 
         public bool IsReady { get; private set; } = true;

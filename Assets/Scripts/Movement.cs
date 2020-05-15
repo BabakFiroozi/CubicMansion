@@ -106,7 +106,7 @@ namespace CubicMansion
 
             const float checkDist = 100;
 
-            float validHeight = _capsuleCollider.height / 2 + .01f;
+            float validHeight = _capsuleCollider.height / 2 + .03f;
 
             var hitResult = new RaycastHit();
 

@@ -15,7 +15,7 @@ namespace CubicMansion
     {
         [SerializeField] UnitFactions _faction;
 
-        [SerializeField] Transform _weaponTr; 
+        [SerializeField] Transform _weaponAttach; 
         
         public Organ Organ { get; set; }
 
@@ -33,7 +33,7 @@ namespace CubicMansion
         {
             Weapons.Add(weapon);
             var tr = weapon.transform;
-            tr.parent = _weaponTr;
+            tr.parent = _weaponAttach;
             tr.localPosition = Vector3.zero;
             weapon.SetOwner(this);
             SetCurrentWeapon(weapon);
