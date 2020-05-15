@@ -193,7 +193,7 @@ MonoBehaviour:
   _walkSpeed: 2
   _runSpeed: 4
   _turnSpeed: 360
-  _jumpForce: 280
+  _jumpForce: 290
   _coordRotSpeed: 90
   _coordChangingForce: 5
 --- !u!114 &2085766840294744219
@@ -268,10 +268,10 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8605127568362059331}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.188, y: -0.234, z: 0}
+  m_LocalRotation: {x: 0, y: -0.026176924, z: 0, w: 0.99965733}
+  m_LocalPosition: {x: 0.17, y: -0.21, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 795640234620271662}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -3, z: 0}

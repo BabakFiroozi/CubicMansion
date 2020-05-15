@@ -43,33 +43,61 @@ namespace CubicMansion
         public Vector3 LeftVec => -RightVec;
         public Vector3 DownVec => -UpVec;
 
-        
-        public void Change(VecTypes newUpVecType, float distance)
+
+        public VecTypes CalcVecType(Vector3 vec)
         {
+            VecTypes vecType = VecTypes.UP;
+            const float limit = 5;
+            if (Vector3.Angle(vec, Vector3.up) < limit)
+                vecType = VecTypes.UP;
+            if (Vector3.Angle(vec, Vector3.down) < limit)
+                vecType = VecTypes.DOWN;
+            if (Vector3.Angle(vec, Vector3.forward) < limit)
+                vecType = VecTypes.FORWARD;
+            if (Vector3.Angle(vec, Vector3.back) < limit)
+                vecType = VecTypes.BACK;
+            if (Vector3.Angle(vec, Vector3.right) < limit)
+                vecType = VecTypes.RIGHT;
+            if (Vector3.Angle(vec, Vector3.left) < limit)
+                vecType = VecTypes.LEFT;
+            return vecType;
+        }
+
+        public Vector3 CalcVector(VecTypes type)
+        {
+            Vector3 vec = Vector3.up;
+            if(type == VecTypes.UP)
+                vec = Vector3.up;
+            if(type == VecTypes.DOWN)
+                vec = Vector3.down;
+            if(type == VecTypes.FORWARD)
+                vec = Vector3.forward;
+            if(type == VecTypes.BACK)
+                vec = Vector3.back;
+            if(type == VecTypes.RIGHT)
+                vec = Vector3.right;
+            if(type == VecTypes.LEFT)
+                vec = Vector3.left;
+            return vec;
+        }
+        
+        public void Change(Vector3 up, float distance)
+        {
+            if (PlayerCharacter.Instance.Movement.CoordChanging)
+                return;
+            
             print("<color=yellow>Gravity Changed...</color>");
+
+            UpVecType = CalcVecType(up);
+
+            Vector3 newUp = CalcVector(UpVecType);
 
             Vector3 forward = PlayerCharacter.Instance.Movement.TurnDirection;
 
-            Vector3 newUp = UpVec;
-            if(newUpVecType == VecTypes.UP)
-                newUp = Vector3.up;
-            if(newUpVecType == VecTypes.DOWN)
-                newUp = Vector3.down;
-            if(newUpVecType == VecTypes.RIGHT)
-                newUp = Vector3.right;
-            if(newUpVecType == VecTypes.LEFT)
-                newUp = Vector3.left;
-            if(newUpVecType == VecTypes.FORWARD)
-                newUp = Vector3.forward;
-            if(newUpVecType == VecTypes.BACK)
-                newUp = Vector3.back;
-
-            UpVecType = newUpVecType;
-            
             float diffAngle = -Vector3.SignedAngle(forward, -newUp, UpVec);
             // print("diff: " + diffAngle);
 
-            Opposite = Vector3.Angle(UpVec, newUp) > 170;
+            Opposite = Vector3.Angle(UpVec, newUp) > 175;
             Distance = distance;
             
             if (Opposite)
@@ -85,13 +113,6 @@ namespace CubicMansion
             UpVec = newUp;
             RightVec = Vector3.Cross(ForwardVec, UpVec);
             
-            // tr.forward = forward;
-            // tr.right = right;
-            // tr.up = up;
-
-            // Vector3 vec = Quaternion.AngleAxis(-diffAngle, UpVec) * forward;
-            // PlayerCharacter.Instance.Movement.SetTurnDirection(vec);
-
             Vector3 vec = Quaternion.AngleAxis(diffAngle, UpVec) * ForwardVec;
             PlayerCharacter.Instance.Movement.ChangeCoord(vec);
             PlayerCharacter.Instance.Movement.SetTurnDirection(vec);

@@ -19,6 +19,8 @@ namespace CubicMansion
         GameObject _gameObj;
         Transform _tr;
         
+        public Transform EyeTr { get; private set; }
+        
         
         public Movement Movement { get; private set; }
 
@@ -35,6 +37,7 @@ namespace CubicMansion
             // _modelObj.SetActive(false);
             _gameObj = gameObject;
             _tr = transform;
+            EyeTr = _eye.transform;
             
             Movement = _gameObj.GetComponent<Movement>();
 

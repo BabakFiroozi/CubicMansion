@@ -12,26 +12,29 @@ namespace CubicMansion
         [SerializeField] float _fireTime;
         [SerializeField] float _fireInterval;
         [SerializeField] Transform _fireTr;
+
+        
+        public WeaponTypes WeaponType => _weaponType;
         
         public Unit Owner { get; private set; }
 
-        public Action EquippedEvent { get; set; }
-
-        public void SetOwner(Unit unit)
-        {
-            Owner = unit;
-            EquippedEvent?.Invoke();
-        }
+        public Action EquipEvent { get; set; }
+        public Action FireEvent { get; private set; }
+        
 
         public bool IsReady { get; private set; } = true;
-        
-        public Action OnFireEvent { get; private set; }
         
 
         void Start()
         {
         }
 
+        public void SetOwner(Unit unit)
+        {
+            Owner = unit;
+            EquipEvent?.Invoke();
+        }
+        
         public Coroutine TryFire()
         {
             var c = StartCoroutine(TryFireCoroutine());
@@ -60,14 +63,14 @@ namespace CubicMansion
             var obj = Instantiate(_projectilePrefab, _fireTr.position, _fireTr.rotation);
             obj.GetComponent<Projectile>().SetSourceUnit(Owner);
             
-            OnFireEvent?.Invoke();
+            FireEvent?.Invoke();
         }
     }
     
     
     public enum WeaponTypes
     {
-        Ranged,
-        Melee
+        Graviter,
+        Builder
     }
 }

@@ -7,9 +7,6 @@ namespace CubicMansion
     {
         public static CameraController Instance { get; private set; }
 
-        [SerializeField] Vector3 _offset;
-        [SerializeField] float _rotationSpeed;
-
         Transform _tr;
 
         bool _follow = true;
@@ -38,11 +35,9 @@ namespace CubicMansion
                 return;
             
             var playerChar = PlayerCharacter.Instance;
-            
-            _tr.position = playerChar.Eye.transform.position;
-            _tr.rotation = playerChar.Eye.transform.rotation;
-        }
 
-        float halfAng;
+            _tr.position = playerChar.EyeTr.position;
+            _tr.rotation = playerChar.EyeTr.rotation;
+        }
     }
 }

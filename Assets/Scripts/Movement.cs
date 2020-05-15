@@ -31,7 +31,7 @@ namespace CubicMansion
         
         bool _moveAsRun;
 
-        public Action<bool> LandedOnGroundEvent { get; set; }
+        public Action<bool> LandEvent { get; set; }
         public Action JumpEvent { get; set; }
 
         public Transform Tr { get; private set; }
@@ -167,7 +167,7 @@ namespace CubicMansion
 
         void LandedOnGround(bool land)
         {
-            LandedOnGroundEvent?.Invoke(land);
+            LandEvent?.Invoke(land);
         }
         
 
@@ -260,7 +260,7 @@ namespace CubicMansion
 
         void GoCoord()
         {
-            float stepCoef = Coordinate.Instance.Opposite ? 2 : 1;
+            float stepCoef = Coordinate.Instance.Opposite ? 1.5f : 1.0f;
             float step = Time.fixedDeltaTime * _coordRotSpeed * stepCoef;
             _coordDegree += step;
                 

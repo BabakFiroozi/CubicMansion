@@ -6,32 +6,31 @@ namespace CubicMansion
     [RequireComponent(typeof(Organ))]
     public class GravityBox : MonoBehaviour
     {
-        [SerializeField] VecTypes _upVec = VecTypes.UP;
-        
-        Organ _damageable;
+        Organ _organ;
 
         void Start()
         {
-            _damageable = gameObject.GetComponent<Organ>();
-            _damageable.OnDamageEvent += OnDamage;
+            _organ = gameObject.GetComponent<Organ>();
+            _organ.DamageEvent += OnDamage;
         }
 
-        void OnDamage(float dmg, Vector3 pos, GameObject prej)
+        void OnDamage(GameObject prej, float dmg, Vector3 pos, Vector3 norm)
         {
-            print("OnDamage");
-
             var projectile  = prej.GetComponent<Projectile>();
             
             if(projectile == null)
                 return;
 
-            var unit = projectile._sourceUnit;
+            if (projectile.WeaponType != WeaponTypes.Graviter)
+                return;
+
+            var unit = projectile.SourceUnit;
             
             if(unit != PlayerCharacter.Instance.Movement.Unit)
                 return;
 
             float dist = (PlayerCharacter.Instance.Movement.Tr.position - pos).magnitude;
-            Coordinate.Instance.Change(_upVec, dist);
+            Coordinate.Instance.Change(norm, dist);
         }
     }
 }

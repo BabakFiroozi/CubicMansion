@@ -8,8 +8,8 @@ namespace CubicMansion
         [SerializeField] float _minHealth = 0;
         [SerializeField] float _maxHealth = 100;
 
-        public Action OnDieEvent { get; set; }
-        public Action<float, Vector3, GameObject> OnDamageEvent { get; set; }
+        public Action DieEvent { get; set; }
+        public Action<GameObject, float, Vector3, Vector3> DamageEvent { get; set; }
 
         public float Health { get; private set; }
 
@@ -18,11 +18,11 @@ namespace CubicMansion
             Health = _maxHealth;
         }
 
-        public void DoDamage(float damage, Vector3 pos, GameObject prejudicial)
+        public void DoDamage(GameObject prejudicial, float damage, Vector3 pos, Vector3 norm)
         {
             Health -= damage;
 
-            OnDamageEvent?.Invoke(damage, pos, prejudicial);
+            DamageEvent?.Invoke(prejudicial, damage, pos, norm);
             
             if(Health < _minHealth)
                 Die();
@@ -30,7 +30,7 @@ namespace CubicMansion
 
         void Die()
         {
-            OnDieEvent?.Invoke();
+            DieEvent?.Invoke();
 
             Destroy(gameObject);
         }

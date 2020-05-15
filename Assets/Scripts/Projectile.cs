@@ -12,13 +12,15 @@ namespace CubicMansion
         [SerializeField] float _maxDistance = 0;
         [SerializeField] int _bulletsCount = 0;
 
-        public Action<GameObject> OnHitEvent { get; private set; }
+        public WeaponTypes WeaponType { get; private set; }
+
+        public Action<GameObject, Vector3, Vector3> HitEvent { get; private set; }
 
         Transform _tr;
         float _distance;
         Vector3 _initPos;
 
-        public Unit _sourceUnit { get; private set; }
+        public Unit SourceUnit { get; private set; }
 	
         RaycastHit[] _hitsArr = new RaycastHit[5];
 
@@ -56,9 +58,9 @@ namespace CubicMansion
                     continue;
                 
                 var obj = hit.collider.gameObject;
-                if (obj == _sourceUnit.gameObject)
+                if (obj == SourceUnit.gameObject)
                     continue;
-                Hit (obj);
+                Hit(obj, hit.point, hit.normal);
                 return;
             }
 
@@ -80,17 +82,18 @@ namespace CubicMansion
 
         public void SetSourceUnit(Unit unit)
         {
-            _sourceUnit = unit;
+            SourceUnit = unit;
+            WeaponType = unit.CurrentWeapon.WeaponType;
         }
 
-        void Hit(GameObject hitObj)
+        void Hit(GameObject objHit, Vector3 pos, Vector3 normal)
         {
-            OnHitEvent?.Invoke(hitObj);
+            HitEvent?.Invoke(objHit, pos, normal);
 
-            var organ = hitObj.GetComponent<Organ>();
+            var organ = objHit.GetComponent<Organ>();
             if (organ != null)
             {
-                organ.DoDamage(_damage, Vector2.zero, gameObject);
+                organ.DoDamage(gameObject, _damage, pos, normal);
             }
 
             Destroy(gameObject);
