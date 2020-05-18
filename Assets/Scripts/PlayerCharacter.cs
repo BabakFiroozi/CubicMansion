@@ -124,7 +124,7 @@ namespace CubicMansion
             }
         }
 
-        public GameObject CurrentBuildBoxPrefab => _buildBoxPrefabList[0];
+        public BuildBoxTypes CurrentBuildBoxType { get; set; } = BuildBoxTypes.Type1;
 
         List<GameObject> _buildBoxPrefabList = new List<GameObject>();
 
@@ -135,9 +135,9 @@ namespace CubicMansion
             _buildBoxPrefabList.Add(box);
         }
         
-        public void DecreaseBuildBox()
+        public void DecreaseBuildBox(GameObject box)
         {
-            _buildBoxPrefabList.Remove(CurrentBuildBoxPrefab);
+            _buildBoxPrefabList.Remove(box);
         }
     }
 }

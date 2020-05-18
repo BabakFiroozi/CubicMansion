@@ -139,13 +139,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 319ed4d4f2294ad7b17b4bf1e0ae36cd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _equipTime: 0.5
   _weaponType: 0
   _modeInfos:
   - fireInterval: 1
     projectile: {fileID: 1125126915509661953, guid: bf26b22ed94f9cb44afd23f32466d323,
       type: 3}
     fireTime: 0
+    reloadTime: 0.5
     firesCount: 1
+    expense: 0
   _fireTr: {fileID: 8991137756220215122}
 --- !u!1 &5203261551970143614
 GameObject:

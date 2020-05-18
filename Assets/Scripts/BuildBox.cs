@@ -5,8 +5,9 @@ namespace CubicMansion
     [RequireComponent(typeof(Organ))]
     public class BuildBox : MonoBehaviour
     {
-        [SerializeField] GameObject _buildPrefab;
-
+        [SerializeField] BuildBoxTypes _type;
+        public BuildBoxTypes Type => _type;
+        
         Organ _organ;
 
         void Start()
@@ -27,7 +28,8 @@ namespace CubicMansion
 
             if (projectile.ProjectileType == ProjectileTypes.BuilderRemove)
             {
-                PlayerCharacter.Instance.IncreaseBuildBox(_buildPrefab);
+                var buildPrefab = Levels.Instance.GetBuildBox(Type);
+                PlayerCharacter.Instance.IncreaseBuildBox(buildPrefab);
                 RemoveBuild();
             }
             
@@ -35,8 +37,9 @@ namespace CubicMansion
             {
                 if (PlayerCharacter.Instance.BuildBoxPrefabsCount > 0)
                 {
-                    CreateBuild(transform, pos, PlayerCharacter.Instance.CurrentBuildBoxPrefab);
-                    PlayerCharacter.Instance.DecreaseBuildBox();
+                    var buildPrefab = Levels.Instance.GetBuildBox(PlayerCharacter.Instance.CurrentBuildBoxType);
+                    CreateBuild(transform, pos, buildPrefab);
+                    PlayerCharacter.Instance.DecreaseBuildBox(buildPrefab);
                 }
             }
         }
@@ -73,5 +76,11 @@ namespace CubicMansion
             var obj = Instantiate(prefab, nearPos, tr.rotation, tr.parent);
             return obj;
         }
+    }
+
+    public enum BuildBoxTypes
+    {
+        Type1,
+        Type2
     }
 }

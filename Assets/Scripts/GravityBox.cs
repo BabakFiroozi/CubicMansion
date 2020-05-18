@@ -34,11 +34,11 @@ namespace CubicMansion
             {
                 if (PlayerCharacter.Instance.BuildBoxPrefabsCount > 0)
                 {
-                    BuildBox.CreateBuild(transform, pos, PlayerCharacter.Instance.CurrentBuildBoxPrefab);
-                    PlayerCharacter.Instance.DecreaseBuildBox();
+                    var buildPrefab = Levels.Instance.GetBuildBox(PlayerCharacter.Instance.CurrentBuildBoxType);
+                    BuildBox.CreateBuild(transform, pos, buildPrefab);
+                    PlayerCharacter.Instance.DecreaseBuildBox(buildPrefab);
                 }
             }
-            
         }
     }
 }

@@ -43,9 +43,9 @@ namespace CubicMansion
         void SetCurrentWeapon(Weapon weapon)
         {
             if (CurrentWeapon != null)
-                CurrentWeapon.gameObject.SetActive(false);
+                CurrentWeapon.UnEquip();
             CurrentWeapon = weapon;
-            CurrentWeapon.gameObject.SetActive(true);
+            CurrentWeapon.Equip();
         }
         
         public void ChangeWeapon(int num)

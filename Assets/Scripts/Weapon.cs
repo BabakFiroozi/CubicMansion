@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace CubicMansion
@@ -7,6 +8,7 @@ namespace CubicMansion
     [RequireComponent(typeof(Organ))]
     public class Weapon : MonoBehaviour
     {
+        [SerializeField] float _equipTime;
         [SerializeField] WeaponTypes _weaponType;
         [SerializeField] WeaponModeInfo[] _modeInfos;
         [SerializeField] Transform _fireTr;
@@ -17,6 +19,7 @@ namespace CubicMansion
         public Unit Owner { get; private set; }
 
         public Action EquipEvent { get; set; }
+        public Action UnEquipEvent { get; set; }
         
         public Action<Projectile> FireEvent { get; private set; }
 
@@ -29,10 +32,29 @@ namespace CubicMansion
         {
         }
 
+        public Coroutine Equip()
+        {
+            gameObject.SetActive(true);
+            var c = StartCoroutine(EquipCoroutine());
+            return c;
+        }
+
+        IEnumerator<WaitForSeconds> EquipCoroutine()
+        {
+            yield return new WaitForSeconds(_equipTime);
+            IsReady = true;
+            EquipEvent?.Invoke();
+        }
+        
+        public void UnEquip()
+        {
+            gameObject.SetActive(false);
+            UnEquipEvent?.Invoke();
+        }
+
         public void SetOwner(Unit unit)
         {
             Owner = unit;
-            EquipEvent?.Invoke();
         }
 
         public Coroutine TryToggleMode()
@@ -60,10 +82,16 @@ namespace CubicMansion
             return c;
         }
 
-        IEnumerator TryFireCoroutine()
+        IEnumerator<WaitForSeconds> TryFireCoroutine()
         {
             if(!IsReady)
                 yield break;
+
+            if (IsEmpty())
+            {
+                TryReload();
+                yield break;
+            }
 
             IsReady = false;
 
@@ -87,6 +115,26 @@ namespace CubicMansion
 
             FireEvent?.Invoke(proj);
         }
+
+        public bool IsEmpty()
+        {
+            return false;
+        }
+
+        Coroutine TryReload()
+        {
+            var c = StartCoroutine(ReloadCoroutine());
+            return c;
+        }
+
+        IEnumerator<WaitForSeconds> ReloadCoroutine()
+        {
+            IsReady = false;
+            var mode = _modeInfos[ActiveMode];
+            yield return new WaitForSeconds(mode.reloadTime);
+            //Reload gun
+            IsReady = true;
+        }
     }
 
 
@@ -96,6 +144,7 @@ namespace CubicMansion
         public float fireInterval;
         public GameObject projectile;
         public float fireTime;
+        public float reloadTime;
         public int firesCount;
         public int expense;
     }

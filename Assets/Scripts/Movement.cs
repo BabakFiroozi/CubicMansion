@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace CubicMansion
@@ -114,7 +115,8 @@ namespace CubicMansion
                 _checkOnGroundHitResultsArr[h] = default;
 
             Physics.RaycastNonAlloc (ray, _checkOnGroundHitResultsArr, checkDist);
-            foreach(var hit in _checkOnGroundHitResultsArr)
+            var hitsArr = _checkOnGroundHitResultsArr.ToList().OrderBy(r => r.distance).ToArray();
+            foreach(var hit in hitsArr)
             {
                 if(hit.collider == null)
                     continue;
