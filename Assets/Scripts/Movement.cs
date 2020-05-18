@@ -20,7 +20,7 @@ namespace CubicMansion
         [SerializeField] float _coordRotSpeed = 90;
         [SerializeField] float _coordChangingForce = 10;
         
-        readonly RaycastHit[] _checkOnGroundHitResultsArr = new RaycastHit[5];
+        readonly RaycastHit[] _checkOnGroundHitResultsArr = new RaycastHit[3];
 
         Vector3 _turnPosition;
         
@@ -31,6 +31,11 @@ namespace CubicMansion
         bool _needToAddCoordChangingForce;
         
         bool _moveAsRun;
+        
+        int _moveForceCounter;
+
+        bool _needJump;
+
 
         public Action<bool> LandEvent { get; set; }
         public Action JumpEvent { get; set; }
@@ -94,9 +99,15 @@ namespace CubicMansion
             CheckOnGround();
 
             if (CoordChanging)
+            {
                 GoCoord();
+            }
             else
+            {
                 GoMove();
+                BalanceRot();
+                GoJump();
+            }
         }
 
         void CheckOnGround()
@@ -105,16 +116,16 @@ namespace CubicMansion
             ray.origin = Tr.position;
             ray.direction = _rigidBody.rotation * Vector3.down;
 
-            const float checkDist = 100;
+            const float check_dist = 100;
 
-            float validHeight = _capsuleCollider.height / 2 + .03f;
+            float validHeight = _capsuleCollider.height / 2 + .05f;
 
             var hitResult = new RaycastHit();
 
             for (int h = 0; h < _checkOnGroundHitResultsArr.Length; ++h)
                 _checkOnGroundHitResultsArr[h] = default;
 
-            Physics.RaycastNonAlloc (ray, _checkOnGroundHitResultsArr, checkDist);
+            Physics.RaycastNonAlloc (ray, _checkOnGroundHitResultsArr, check_dist);
             var hitsArr = _checkOnGroundHitResultsArr.ToList().OrderBy(r => r.distance).ToArray();
             foreach(var hit in hitsArr)
             {
@@ -127,9 +138,9 @@ namespace CubicMansion
                 break;
             }
 
-            bool isOnGround = hitResult.distance > 0 && hitResult.distance <= validHeight;
+            bool onGround = hitResult.distance > 0 && hitResult.distance <= validHeight;
 
-            if (isOnGround)
+            if (onGround)
             {
                 if (OnGroundTime < 0)
                 {
@@ -151,7 +162,7 @@ namespace CubicMansion
 
             _rigidBody.angularDrag = 10;
 
-            if (isOnGround)
+            if (onGround)
             {
                 _rigidBody.drag = 10;
             }
@@ -171,80 +182,96 @@ namespace CubicMansion
         {
             LandEvent?.Invoke(land);
         }
-        
-
-        void GoMove()
-        {
-            if (IsOnGround)
-            {
-                Vector3 forceDir = MoveDirection;
-
-                float moveForce = _moveAsRun ? _runForce : _walkForce;
-                float moveSpeed = _moveAsRun ? _runSpeed : _walkSpeed;
-
-                if (forceDir != Vector3.zero)
-                {
-                    Vector3 bodyVel = _rigidBody.velocity;
-                    var coordUpType = Coordinate.Instance.UpVecType;
-                    if (coordUpType == VecTypes.UP || coordUpType == VecTypes.DOWN)
-                        bodyVel.y = 0;
-                    if (coordUpType == VecTypes.FORWARD || coordUpType == VecTypes.BACK)
-                        bodyVel.z = 0;
-                    if (coordUpType == VecTypes.RIGHT || coordUpType == VecTypes.LEFT)
-                        bodyVel.x = 0;
-
-                    if (bodyVel.magnitude < moveSpeed)
-                    {
-                        Vector3 forceVec = moveForce * Time.fixedDeltaTime * forceDir;
-                        forceVec = Quaternion.LookRotation(TurnDirection, Coordinate.Instance.UpVec) * forceVec;
-                        _rigidBody.AddForce(forceVec, ForceMode.Force);
-                    }
-                }
-
-                if (_isTurning)
-                {
-                    Vector3 turnDir = (_turnPosition - Tr.position).normalized;
-                    float diffAngle = Vector3.Angle(TurnDirection, turnDir);
-                    float rotSpeed = _turnSpeed * Time.fixedDeltaTime;
-
-                    if (diffAngle >= rotSpeed)
-                    {
-                        float ang = Mathf.Deg2Rad * rotSpeed;
-                        TurnDirection = Vector3.RotateTowards(TurnDirection, turnDir, ang, 0);
-                    }
-                    else
-                    {
-                        TurnDirection = turnDir;
-                        _isTurning = false;
-                    }
-                }
-            }
-
-            _rigidBody.angularVelocity = Vector3.zero;
-            _fromCoordRot  = Quaternion.LookRotation(TurnDirection, Coordinate.Instance.UpVec);
-            _rigidBody.MoveRotation(_fromCoordRot);
-        }
 
         public void MoveAsRun(bool run)
         {
             _moveAsRun = run;
         }
 
-        public void TryJump()
+        void GoMove()
         {
+            if (_moveForceCounter > 0)
+                _moveForceCounter--;
+            
             if (!IsOnGround)
                 return;
-            Jump();
+
+            Vector3 forceDir = MoveDirection;
+
+            float moveForce = _moveAsRun ? _runForce : _walkForce;
+            float moveSpeed = _moveAsRun ? _runSpeed : _walkSpeed;
+
+            if (_moveForceCounter == 0 && forceDir != Vector3.zero)
+            {
+                Vector3 bodyVel = _rigidBody.velocity;
+                var coordUpType = Coordinate.Instance.UpVecType;
+                if (coordUpType == VecTypes.UP || coordUpType == VecTypes.DOWN)
+                    bodyVel.y = 0;
+                if (coordUpType == VecTypes.FORWARD || coordUpType == VecTypes.BACK)
+                    bodyVel.z = 0;
+                if (coordUpType == VecTypes.RIGHT || coordUpType == VecTypes.LEFT)
+                    bodyVel.x = 0;
+
+                if (bodyVel.magnitude < moveSpeed)
+                {
+                    _moveForceCounter = 3;
+                    Vector3 forceVec = moveForce * Time.fixedDeltaTime * forceDir;
+                    forceVec = Quaternion.LookRotation(TurnDirection, Coordinate.Instance.UpVec) * forceVec;
+                    _rigidBody.AddForce(forceVec, ForceMode.Force);
+                }
+            }
+            
+            if (_isTurning)
+            {
+                Vector3 turnDir = (_turnPosition - Tr.position).normalized;
+                float diffAngle = Vector3.Angle(TurnDirection, turnDir);
+                float rotSpeed = _turnSpeed * Time.fixedDeltaTime;
+
+                if (diffAngle >= rotSpeed)
+                {
+                    float ang = Mathf.Deg2Rad * rotSpeed;
+                    TurnDirection = Vector3.RotateTowards(TurnDirection, turnDir, ang, 0);
+                }
+                else
+                {
+                    TurnDirection = turnDir;
+                    _isTurning = false;
+                }
+            }
         }
 
-        void Jump()
+
+        void BalanceRot()
         {
-            float jumpForce = _jumpForce;
-            _rigidBody.AddForce(Coordinate.Instance.UpVec * jumpForce, ForceMode.Force);
-            JumpEvent?.Invoke();
+            _rigidBody.angularVelocity = Vector3.zero;
+            _fromCoordRot  = Quaternion.LookRotation(TurnDirection, Coordinate.Instance.UpVec);
+            _rigidBody.MoveRotation(_fromCoordRot);
         }
 
+        void GoJump()
+        {
+            if (_needJump)
+            {
+                _needJump = false;
+                float jumpForce = _jumpForce;
+                _rigidBody.AddForce(Coordinate.Instance.UpVec * jumpForce, ForceMode.Force);
+                JumpEvent?.Invoke();
+            }
+        }
+        
+        public bool TryJump()
+        {
+            if (!IsOnGround)
+                return false;
+            _needJump = true;
+            return true;
+        }
+        
 
+        
+        
+        //----------------------------------------------------------------------------------
+        
         Quaternion _fromCoordRot;
         Quaternion _toCoordRot;
         float _needCoordDegree;

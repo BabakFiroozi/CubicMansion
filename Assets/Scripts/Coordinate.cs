@@ -85,13 +85,13 @@ namespace CubicMansion
         {
             if (PlayerCharacter.Instance.Movement.CoordChanging)
                 return;
-            
-            print("<color=yellow>Gravity Changed...</color>");
 
             VecTypes vecType = CalcVecType(up);
 
             if(vecType == UpVecType)
                 return;
+            
+            print("<color=yellow>Gravity Changed...</color>");
             
             UpVecType = vecType;
 

@@ -193,7 +193,7 @@ MonoBehaviour:
   _walkSpeed: 2
   _runSpeed: 4
   _turnSpeed: 360
-  _jumpForce: 290
+  _jumpForce: 300
   _coordRotSpeed: 90
   _coordChangingForce: 5
 --- !u!114 &2085766840294744219
@@ -212,8 +212,10 @@ MonoBehaviour:
   _horRotationSpeed: 120
   _verRotationSpeed: 120
   _modelObj: {fileID: 5758250501335594385}
-  _defaultWeaponPrefab: {fileID: 4988420745337114693, guid: 549168e7e1ebc5d4793915025162841f,
-    type: 3}
+  _defaultWeaponPrefabs:
+  - {fileID: 4988420745337114693, guid: 549168e7e1ebc5d4793915025162841f, type: 3}
+  - {fileID: 4988420745337114693, guid: 9c5f98d962a972a4394696c8eb795dba, type: 3}
+  - {fileID: 4988420745337114693, guid: d97b51b73bfc6bc4d91c2e1b431d5cf8, type: 3}
 --- !u!1 &6088523240966853075
 GameObject:
   m_ObjectHideFlags: 0
