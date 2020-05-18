@@ -8,9 +8,7 @@ namespace CubicMansion
     public class Weapon : MonoBehaviour
     {
         [SerializeField] WeaponTypes _weaponType;
-        [SerializeField] GameObject _projectilePrefab;
-        [SerializeField] float _fireTime;
-        [SerializeField] float _fireInterval;
+        [SerializeField] WeaponModeInfo[] _modeInfos;
         [SerializeField] Transform _fireTr;
 
         
@@ -19,10 +17,12 @@ namespace CubicMansion
         public Unit Owner { get; private set; }
 
         public Action EquipEvent { get; set; }
-        public Action FireEvent { get; private set; }
         
+        public Action<Projectile> FireEvent { get; private set; }
 
         public bool IsReady { get; private set; } = true;
+
+        public int ActiveMode { get; private set; }
         
 
         void Start()
@@ -33,6 +33,25 @@ namespace CubicMansion
         {
             Owner = unit;
             EquipEvent?.Invoke();
+        }
+
+        public Coroutine TryToggleMode()
+        {
+            var c = StartCoroutine(ToggleModeCoroutine());
+            return c;
+        }
+
+        IEnumerator ToggleModeCoroutine()
+        {
+            if(!IsReady)
+                yield break;
+
+            if (ActiveMode == 0)
+                ActiveMode = 1;
+            else if (ActiveMode == 1)
+                ActiveMode = 0;
+            
+            //play animation and change weapon mode
         }
         
         public Coroutine TryFire()
@@ -47,30 +66,45 @@ namespace CubicMansion
                 yield break;
 
             IsReady = false;
+
+            var mode = _modeInfos[ActiveMode];
             
-            yield return new WaitForSeconds(_fireTime);
+            yield return new WaitForSeconds(mode.fireTime);
+
+            Fire(mode.projectile);
             
-            Fire();
-            
-            yield return new WaitForSeconds(_fireInterval);
+            yield return new WaitForSeconds(mode.fireInterval);
 
             IsReady = true;
         }
         
 
-        void Fire()
+        void Fire(GameObject projPrefab)
         {
-            var obj = Instantiate(_projectilePrefab, _fireTr.position, _fireTr.rotation);
-            obj.GetComponent<Projectile>().SetSourceUnit(Owner);
-            
-            FireEvent?.Invoke();
+            var obj = Instantiate(projPrefab, _fireTr.position, _fireTr.rotation);
+            var proj = obj.GetComponent<Projectile>(); 
+            proj.SetSourceUnit(Owner);
+
+            FireEvent?.Invoke(proj);
         }
+    }
+
+
+    [Serializable]
+    public class WeaponModeInfo
+    {
+        public float fireInterval;
+        public GameObject projectile;
+        public float fireTime;
+        public int firesCount;
+        public int expense;
     }
     
     
     public enum WeaponTypes
     {
         Graviter,
-        Builder
+        BuilderRemove,
+        BuilderAdd
     }
 }

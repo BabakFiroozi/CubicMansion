@@ -29,14 +29,15 @@ namespace CubicMansion
             Organ = gameObject.GetComponent<Organ>();
         }
 
-        public void AddWeapon(Weapon weapon)
+        public void AddWeapon(Weapon weapon, bool current)
         {
             Weapons.Add(weapon);
             var tr = weapon.transform;
             tr.parent = _weaponAttach;
             tr.localPosition = Vector3.zero;
             weapon.SetOwner(this);
-            SetCurrentWeapon(weapon);
+            if (current)
+                SetCurrentWeapon(weapon);
         }
 
         void SetCurrentWeapon(Weapon weapon)

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace CubicMansion
@@ -13,14 +14,13 @@ namespace CubicMansion
         [SerializeField] float _verRotationSpeed = 90;
         [SerializeField] GameObject _modelObj;
 
-        [SerializeField] GameObject _defaultWeaponPrefab;
+        [SerializeField] GameObject[] _defaultWeaponPrefabs;
         
         
         GameObject _gameObj;
         Transform _tr;
         
-        public Transform EyeTr { get; private set; }
-        
+        public Transform EyeTr { get; private set; }        
         
         public Movement Movement { get; private set; }
 
@@ -43,8 +43,13 @@ namespace CubicMansion
 
             Cursor.lockState = CursorLockMode.Locked;
 
-            var obj = Instantiate(_defaultWeaponPrefab);
-            Movement.Unit.AddWeapon(obj.GetComponent<Weapon>());
+            foreach (var prefab in _defaultWeaponPrefabs)
+            {
+                var obj = Instantiate(prefab);
+                Movement.Unit.AddWeapon(obj.GetComponent<Weapon>(), false);
+            }
+
+            Movement.Unit.ChangeWeapon(1);
         }
 
         void Update()
@@ -55,6 +60,13 @@ namespace CubicMansion
                 Cursor.lockState = CursorLockMode.Locked;
             if (Input.GetMouseButton(0) && Cursor.lockState == CursorLockMode.None)
                 return;
+            
+            if(Input.GetKeyDown(KeyCode.Alpha1))
+                Movement.Unit.ChangeWeapon(1);
+            if(Input.GetKeyDown(KeyCode.Alpha2))
+                Movement.Unit.ChangeWeapon(2);
+            if(Input.GetKeyDown(KeyCode.Alpha3))
+                Movement.Unit.ChangeWeapon(3);
 
             if (Input.GetButtonDown("Fire1"))
             {
@@ -110,6 +122,22 @@ namespace CubicMansion
             {
                 _eye.Rotate(new Vector3(-verAngle, 0, 0), Space.Self);
             }
+        }
+
+        public GameObject CurrentBuildBoxPrefab => _buildBoxPrefabList[0];
+
+        List<GameObject> _buildBoxPrefabList = new List<GameObject>();
+
+        public int BuildBoxPrefabsCount => _buildBoxPrefabList.Count;
+
+        public void IncreaseBuildBox(GameObject box)
+        {
+            _buildBoxPrefabList.Add(box);
+        }
+        
+        public void DecreaseBuildBox()
+        {
+            _buildBoxPrefabList.Remove(CurrentBuildBoxPrefab);
         }
     }
 }

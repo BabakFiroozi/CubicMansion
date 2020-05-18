@@ -20,17 +20,25 @@ namespace CubicMansion
             
             if(projectile == null)
                 return;
-
-            if (projectile.WeaponType != WeaponTypes.Graviter)
-                return;
-
-            var unit = projectile.SourceUnit;
             
-            if(unit != PlayerCharacter.Instance.Movement.Unit)
+            if(projectile.SourceUnit != PlayerCharacter.Instance.Movement.Unit)
                 return;
 
-            float dist = (PlayerCharacter.Instance.Movement.Tr.position - pos).magnitude;
-            Coordinate.Instance.Change(norm, dist);
+            if (projectile.ProjectileType == ProjectileTypes.Graviter)
+            {
+                float dist = (PlayerCharacter.Instance.Movement.Tr.position - pos).magnitude;
+                Coordinate.Instance.Change(norm, dist);
+            }
+
+            if (projectile.ProjectileType == ProjectileTypes.BuilderAdd)
+            {
+                if (PlayerCharacter.Instance.BuildBoxPrefabsCount > 0)
+                {
+                    BuildBox.CreateBuild(transform, pos, PlayerCharacter.Instance.CurrentBuildBoxPrefab);
+                    PlayerCharacter.Instance.DecreaseBuildBox();
+                }
+            }
+            
         }
     }
 }

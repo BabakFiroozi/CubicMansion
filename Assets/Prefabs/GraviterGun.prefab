@@ -54,6 +54,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -65,6 +66,7 @@ MeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -89,7 +91,7 @@ GameObject:
   - component: {fileID: 6794393820070941191}
   - component: {fileID: 4136878226850596791}
   m_Layer: 0
-  m_Name: GravityGun
+  m_Name: GraviterGun
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -138,10 +140,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _weaponType: 0
-  _projectilePrefab: {fileID: 1125126915509661953, guid: bf26b22ed94f9cb44afd23f32466d323,
-    type: 3}
-  _fireTime: 0
-  _fireInterval: 0
+  _modeInfos:
+  - fireInterval: 1
+    projectile: {fileID: 1125126915509661953, guid: bf26b22ed94f9cb44afd23f32466d323,
+      type: 3}
+    fireTime: 0
+    firesCount: 1
   _fireTr: {fileID: 8991137756220215122}
 --- !u!1 &5203261551970143614
 GameObject:

@@ -6,26 +6,32 @@ namespace CubicMansion
     [RequireComponent(typeof(Organ))]
     public class Projectile : MonoBehaviour
     {
+        [SerializeField] ProjectileTypes _projectileType;
         [SerializeField] float _speed = 0;
         [SerializeField] float _damage = 0;
         [SerializeField] float _gravity = 0;
         [SerializeField] float _maxDistance = 0;
         [SerializeField] int _bulletsCount = 0;
 
-        public WeaponTypes WeaponType { get; private set; }
+        public Weapon Weapon { get; private set; }
 
+        public ProjectileTypes ProjectileType => _projectileType;
+        
+        
         public Action<GameObject, Vector3, Vector3> HitEvent { get; private set; }
 
         Transform _tr;
         float _distance;
         Vector3 _initPos;
+        GameObject _gameObj;
 
         public Unit SourceUnit { get; private set; }
 	
-        RaycastHit[] _hitsArr = new RaycastHit[5];
+        readonly RaycastHit[] _hitsArr = new RaycastHit[5];
 
         void Awake()
         {
+            _gameObj = gameObject;
             _tr = transform;
             _initPos = _tr.position;
             _distance = 0;
@@ -83,20 +89,27 @@ namespace CubicMansion
         public void SetSourceUnit(Unit unit)
         {
             SourceUnit = unit;
-            WeaponType = unit.CurrentWeapon.WeaponType;
+            Weapon = unit.CurrentWeapon;
         }
 
         void Hit(GameObject objHit, Vector3 pos, Vector3 normal)
         {
             HitEvent?.Invoke(objHit, pos, normal);
-
+            
             var organ = objHit.GetComponent<Organ>();
             if (organ != null)
             {
-                organ.DoDamage(gameObject, _damage, pos, normal);
+                organ.DoDamage(_gameObj, _damage, pos, normal);
             }
 
-            Destroy(gameObject);
+            Destroy(_gameObj);
         }
+    }
+
+    public enum ProjectileTypes
+    {
+        Graviter,
+        BuilderRemove,
+        BuilderAdd
     }
 }
