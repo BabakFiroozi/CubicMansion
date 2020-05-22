@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace CubicMansion
@@ -10,8 +11,10 @@ namespace CubicMansion
         [SerializeField] float _gravityAmount = 9.8f;
 
         public VecTypes UpVecType { get; private set; }
-        
-        
+
+        public Action CoordinateChangedEvent { get; set; }
+
+
         void Awake()
         {
             if (Instance == null)
@@ -117,6 +120,8 @@ namespace CubicMansion
             
             UpVec = newUp;
             RightVec = Vector3.Cross(ForwardVec, UpVec);
+            
+            CoordinateChangedEvent?.Invoke();
             
             Vector3 vec = Quaternion.AngleAxis(diffAngle, UpVec) * ForwardVec;
             PlayerCharacter.Instance.Movement.ChangeCoord(vec);
