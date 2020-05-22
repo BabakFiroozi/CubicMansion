@@ -4,7 +4,7 @@ using UnityEngine;
 namespace CubicMansion
 {
     [RequireComponent(typeof(Organ))]
-    public class GravityBox : MonoBehaviour
+    public class CoordBox : MonoBehaviour
     {
         Organ _organ;
 
