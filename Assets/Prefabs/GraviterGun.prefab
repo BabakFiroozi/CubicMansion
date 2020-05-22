@@ -150,6 +150,7 @@ MonoBehaviour:
     firesCount: 1
     expense: 0
   _fireTr: {fileID: 8991137756220215122}
+  _weaponName: Graviter Gun
 --- !u!1 &5203261551970143614
 GameObject:
   m_ObjectHideFlags: 0

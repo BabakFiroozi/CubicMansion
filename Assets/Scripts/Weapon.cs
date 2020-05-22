@@ -12,7 +12,7 @@ namespace CubicMansion
         [SerializeField] WeaponTypes _weaponType;
         [SerializeField] WeaponModeInfo[] _modeInfos;
         [SerializeField] Transform _fireTr;
-
+        [SerializeField] string _weaponName;
         
         public WeaponTypes WeaponType => _weaponType;
         
@@ -26,6 +26,8 @@ namespace CubicMansion
         public bool IsReady { get; private set; } = true;
 
         public int ActiveMode { get; private set; }
+
+        public string WeaponName => _weaponName;
         
 
         void Start()

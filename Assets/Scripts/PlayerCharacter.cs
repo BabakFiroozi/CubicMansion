@@ -30,6 +30,7 @@ namespace CubicMansion
         void Awake()
         {
             Instance = this;
+            Movement = GetComponent<Movement>();
         }
 
         void Start()
@@ -38,8 +39,6 @@ namespace CubicMansion
             _gameObj = gameObject;
             _tr = transform;
             EyeTr = _eye.transform;
-            
-            Movement = _gameObj.GetComponent<Movement>();
 
             Cursor.lockState = CursorLockMode.Locked;
 

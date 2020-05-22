@@ -22,6 +22,8 @@ namespace CubicMansion
         public Weapon CurrentWeapon { get; private set; }
         
         public List<Weapon> Weapons { get; } = new List<Weapon>();
+        
+        public Action WeaponEquipped { get; set; }
 
 
         void Start()
@@ -47,6 +49,7 @@ namespace CubicMansion
                 CurrentWeapon.UnEquip();
             CurrentWeapon = weapon;
             CurrentWeapon.Equip();
+            WeaponEquipped?.Invoke();
         }
         
         public void ChangeWeapon(int num)
