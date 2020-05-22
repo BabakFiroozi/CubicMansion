@@ -52,6 +52,11 @@ namespace CubicMansion
             UnEquipEvent?.Invoke();
         }
 
+        public void Hide()
+        {
+            gameObject.SetActive(false);
+        }
+
         public void SetOwner(Unit unit)
         {
             Owner = unit;

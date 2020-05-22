@@ -36,6 +36,7 @@ namespace CubicMansion
             tr.parent = _weaponAttach;
             tr.localPosition = Vector3.zero;
             weapon.SetOwner(this);
+            weapon.Hide();
             if (current)
                 SetCurrentWeapon(weapon);
         }

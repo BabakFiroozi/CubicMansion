@@ -209,8 +209,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _eye: {fileID: 795640234620271662}
-  _horRotationSpeed: 120
-  _verRotationSpeed: 120
+  _horRotationSpeed: 90
+  _verRotationSpeed: 90
   _modelObj: {fileID: 5758250501335594385}
   _defaultWeaponPrefabs:
   - {fileID: 4988420745337114693, guid: 549168e7e1ebc5d4793915025162841f, type: 3}
