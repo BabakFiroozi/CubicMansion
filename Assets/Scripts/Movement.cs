@@ -73,22 +73,17 @@ namespace CubicMansion
 
         void Awake()
         {
-            Unit = GetComponent<Unit>();
-
             GameObj = gameObject;
-            
             Tr = transform;
-            var pos = Tr.position;
-            var forw = Tr.forward;
-            _turnPosition = pos + forw;
-            TurnDirection = forw;
-
+            Unit = GetComponent<Unit>();
             _capsuleCollider = GameObj.GetComponent<CapsuleCollider>();
         }
 
         // Start is called before the first frame update
         void Start()
         {
+            _turnPosition = Tr.position + Tr.forward * 3;
+            TurnDirection = Tr.forward;
         }
 
         // Update is called once per frame

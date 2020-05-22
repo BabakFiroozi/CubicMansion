@@ -16,30 +16,26 @@ namespace CubicMansion
 
         [SerializeField] GameObject[] _defaultWeaponPrefabs;
         
-        
-        GameObject _gameObj;
         Transform _tr;
-        
-        public Transform EyeTr { get; private set; }        
+
+        public Transform EyeTr => _eye;  
         
         public Movement Movement { get; private set; }
 
-        public Transform Eye => _eye;
-        
+        public GameObject GameObj { get; private set; }
+
         
         void Awake()
         {
             Instance = this;
+            GameObj = gameObject;
+            _tr = transform;
             Movement = GetComponent<Movement>();
         }
 
         void Start()
         {
             // _modelObj.SetActive(false);
-            _gameObj = gameObject;
-            _tr = transform;
-            EyeTr = _eye.transform;
-
             Cursor.lockState = CursorLockMode.Locked;
 
             foreach (var prefab in _defaultWeaponPrefabs)

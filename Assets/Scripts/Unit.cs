@@ -26,7 +26,7 @@ namespace CubicMansion
         public Action WeaponEquipped { get; set; }
 
 
-        void Start()
+        void Awake()
         {
             Organ = gameObject.GetComponent<Organ>();
         }
@@ -37,6 +37,7 @@ namespace CubicMansion
             var tr = weapon.transform;
             tr.parent = _weaponAttach;
             tr.localPosition = Vector3.zero;
+            tr.localRotation = Quaternion.identity;
             weapon.SetOwner(this);
             weapon.Hide();
             if (current)
