@@ -8,8 +8,6 @@ namespace CubicMansion
     {
         [SerializeField] Rigidbody _rigidBody;
 
-        [SerializeField] Organ _organ;
-
         [SerializeField] Material _freezeMaterial;
         [SerializeField] Material _freeMaterial;
 
@@ -18,6 +16,7 @@ namespace CubicMansion
 
         public bool IsFreezed => _isFreezed;
         
+        Organ _organ;
 
 
         void Start()
