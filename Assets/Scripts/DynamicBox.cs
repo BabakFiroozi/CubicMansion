@@ -22,18 +22,18 @@ namespace CubicMansion
         {
             _organ = gameObject.GetComponent<Organ>();
             _organ.DamageEvent = OnDamage;
-            Coordinate.Instance.CoordinateChangedEvent += CoordinateChangedEvent;
+            Coordinate.Instance.CoordinateChangedEvent += HandleCoordinateChangedEvent;
 
-            CoordinateChangedEvent();
+            HandleCoordinateChangedEvent();
         }
 
         void OnDestroy()
         {
-            Coordinate.Instance.CoordinateChangedEvent -= CoordinateChangedEvent;            
+            Coordinate.Instance.CoordinateChangedEvent -= HandleCoordinateChangedEvent;            
             _organ.DamageEvent = null;
         }
 
-        void CoordinateChangedEvent()
+        void HandleCoordinateChangedEvent()
         {
             if(IsFreezed)
                 return;
@@ -58,7 +58,7 @@ namespace CubicMansion
             if (projectile.SourceUnit != PlayerCharacter.Instance.Movement.Unit)
                 return;
 
-            if (projectile.ProjectileType != ProjectileTypes.FreezeDynamic)
+            if (projectile.ProjectileType != ProjectileTypes.DynamicFreeze)
                 return;
 
             IsFreezed = !IsFreezed;
@@ -83,6 +83,7 @@ namespace CubicMansion
         void UnFreeze()
         {
             _rigidBody.isKinematic = false;
+            HandleCoordinateChangedEvent();
         }
     }
 }
