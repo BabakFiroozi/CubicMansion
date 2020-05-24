@@ -28,7 +28,7 @@ namespace CubicMansion
                 _rigidBody.constraints &= ~RigidbodyConstraints.FreezePositionY;
             if (upVecType == VecTypes.FORWARD || upVecType == VecTypes.BACK)
                 _rigidBody.constraints &= ~RigidbodyConstraints.FreezePositionZ;
-            if (upVecType == VecTypes.RIGHT || upVecType == VecTypes.BACK)
+            if (upVecType == VecTypes.RIGHT || upVecType == VecTypes.LEFT)
                 _rigidBody.constraints &= ~RigidbodyConstraints.FreezePositionX;
         }
     }
