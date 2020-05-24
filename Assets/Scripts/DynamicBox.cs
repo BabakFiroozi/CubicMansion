@@ -14,28 +14,30 @@ namespace CubicMansion
         [SerializeField] Material _freeMaterial;
 
         [SerializeField] MeshRenderer _meshRenderer;
+        [SerializeField] bool _isFreezed;
+
+        public bool IsFreezed => _isFreezed;
         
-        public bool IsFreezed { get; private set; }
-        
+
 
         void Start()
         {
             _organ = gameObject.GetComponent<Organ>();
             _organ.DamageEvent = OnDamage;
-            Coordinate.Instance.CoordinateChangedEvent += HandleCoordinateChangedEvent;
+            Coordinate.Instance.CoordinateChangedEvent += CoordinateChangedEvent;
 
-            HandleCoordinateChangedEvent();
+            HandleFreeze();
         }
 
         void OnDestroy()
         {
-            Coordinate.Instance.CoordinateChangedEvent -= HandleCoordinateChangedEvent;            
+            Coordinate.Instance.CoordinateChangedEvent -= CoordinateChangedEvent;            
             _organ.DamageEvent = null;
         }
 
-        void HandleCoordinateChangedEvent()
+        void CoordinateChangedEvent()
         {
-            if(IsFreezed)
+            if(_isFreezed)
                 return;
             
             _rigidBody.constraints = RigidbodyConstraints.FreezeAll;
@@ -60,10 +62,18 @@ namespace CubicMansion
 
             if (projectile.ProjectileType != ProjectileTypes.DynamicFreeze)
                 return;
+            
+            if(_rigidBody.velocity.magnitude > 0)
+                return;
+            
+            _isFreezed = !_isFreezed;
 
-            IsFreezed = !IsFreezed;
+            HandleFreeze();
+        }
 
-            if (IsFreezed)
+        void HandleFreeze()
+        {
+            if (_isFreezed)
             {
                 _meshRenderer.material = _freezeMaterial;
                 Freeze();
@@ -83,7 +93,7 @@ namespace CubicMansion
         void UnFreeze()
         {
             _rigidBody.isKinematic = false;
-            HandleCoordinateChangedEvent();
+            CoordinateChangedEvent();
         }
     }
 }
