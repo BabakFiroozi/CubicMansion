@@ -161,6 +161,7 @@ namespace CubicMansion
     {
         Graviter,
         BuilderRemove,
-        BuilderAdd
+        BuilderAdd,
+        Freezer
     }
 }

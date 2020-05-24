@@ -110,6 +110,7 @@ namespace CubicMansion
     {
         Graviter,
         BuilderRemove,
-        BuilderAdd
+        BuilderAdd,
+        FreezeDynamic
     }
 }

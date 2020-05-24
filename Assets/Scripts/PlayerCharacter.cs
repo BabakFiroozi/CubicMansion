@@ -62,6 +62,8 @@ namespace CubicMansion
                 Movement.Unit.ChangeWeapon(2);
             if(Input.GetKeyDown(KeyCode.Alpha3))
                 Movement.Unit.ChangeWeapon(3);
+            if(Input.GetKeyDown(KeyCode.Alpha4))
+                Movement.Unit.ChangeWeapon(4);
 
             if (Input.GetButtonDown("Fire1"))
             {
